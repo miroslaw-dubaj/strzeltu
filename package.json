@@ -1,0 +1,22 @@
+{
+  "name": "strzeltu.pl",
+  "version": "1.0.0",
+  "description": "Web app for shooters, enabling them to book range spots online.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "shooting",
+    "range",
+    "booking",
+    "web",
+    "app"
+  ],
+  "author": "Miroslaw Dubaj",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.5.8",
+    "express": "^4.16.3"
+  }
+}

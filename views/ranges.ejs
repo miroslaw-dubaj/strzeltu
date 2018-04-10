@@ -1,0 +1,12 @@
+<h1>List of all ranges near to Rzeszów</h1>
+
+<ul>
+  <% ranges.forEach((range) => { %>
+    <div>
+      <h4>
+        <%= range.name %>
+      </h4>
+      <img src='<%= range.image %>' />
+    </div>
+  <% }) %>
+</ul>
