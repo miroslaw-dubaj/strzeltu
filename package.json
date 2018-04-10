@@ -6,6 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/npm/npm.git"
+  },
   "keywords": [
     "shooting",
     "range",
@@ -16,7 +20,10 @@
   "author": "Miroslaw Dubaj",
   "license": "ISC",
   "dependencies": {
+    "bootstrap": "^4.1.0",
     "ejs": "^2.5.8",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "jquery": "^3.3.1",
+    "popper.js": "^1.14.3"
   }
 }
