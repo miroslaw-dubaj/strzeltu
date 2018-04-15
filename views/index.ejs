@@ -1,0 +1,27 @@
+<% include partials/header.ejs %>
+
+<header class="jumbotron">
+  <div class="container">
+    <h1>Range Directory for Poland</h1>
+    <p>Find your favorive shooting range and book it!</p>
+    <a href="ranges/new" class="btn btn-dark">Add new range!</a>
+  </div>
+</header>
+
+<div class="container">
+  <div class="row"> 
+    <% ranges.forEach((range) => { %>
+      <a href="/ranges/<%= range._id %>" class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card mb-3">
+          <img src="<%= range.image %>" class="img-thumbnail card-img-top"/>
+          <div class="card-body">
+            <h5 class="card-title"><%= range.name %></h5>
+            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+          </div>
+        </div>
+      </a>  
+    <% }) %>
+  </div>
+</div>
+<% include partials/footer.ejs %>
