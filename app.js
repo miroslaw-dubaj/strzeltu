@@ -1,23 +1,11 @@
-const express = require('express'),
-      app = express(),
-      bodyParser = require('body-parser'), 
-      mongoose = require('mongoose');
+const express =     require('express'),
+      app =         express(),
+      bodyParser =  require('body-parser'), 
+      mongoose =    require('mongoose'),
+      Range =       require('./models/range'),
+      Comment =     require('./models/comment');
 
-mongoose.connect('mongodb://localhost/strzeltu')
-
-const rangeSchema = new mongoose.Schema({
-  name: String,
-  image: String
-});
-
-const Range = mongoose.model('Range', rangeSchema);
-
-// Range.create({
-//     name: 'Strzelnica CEL w Łańcucie',
-//     image: 'https://scontent-waw1-1.xx.fbcdn.net/v/t31.0-8/20507437_489561561402070_2222920359021455001_o.jpg?_nc_cat=0&oh=31e244b1527b82025acb37575a11ebe5&oe=5B30106F'
-// }, (err, res) => {
-//   (err) ? (console.log(err)) : (console.log(res));
-// });
+mongoose.connect('mongodb://localhost/strzeltu');
 
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -36,7 +24,7 @@ app.get('/', (req, res) => {
 
 app.get('/ranges', (req, res) => {
   Range.find({}, (err, dbRanges) => {
-    (err)?console.log(err):res.render('index', {ranges: dbRanges});
+    (err)?console.log(err):res.render('ranges/index', {ranges: dbRanges});
   })
 });
 
@@ -50,14 +38,38 @@ app.post('/ranges', (req, res) => {
 });
 
 app.get('/ranges/new/', (req, res) => {
-  res.render('new-range');
+  res.render('ranges/new');
 });
 
 app.get('/ranges/:id', (req, res) => {
-    Range.findById(req.params.id, (err, dbRange) => {
-      (err) ? console.log(err) : res.render('show', { range: dbRange });
-    });
+  Range.findById(req.params.id).populate('comments').exec((err, dbRange) => {
+    (err) ? console.log(err) : res.render('ranges/show', { range: dbRange });
+  });
 });
+
+app.get('/ranges/:id/comments/new', (req, res) => {
+  Range.findById(req.params.id, (err, dbRange) => {
+    (err) ? console.log(err) : res.render('comments/new', { range: dbRange });
+  });
+});
+
+app.post('/ranges/:id/comments', (req, res) => {
+  Range.findById(req.params.id, (err, dbRange) => {
+    if (err) {
+      console.log(err);
+    } else {
+      Comment.create(req.body.comment, (err, dbResponse) => {
+        if (err) {
+          console.log(err); 
+        } else {
+          dbRange.comments.push(dbResponse);
+          dbRange.save();
+          res.redirect('/ranges/' + dbRange._id);
+        } 
+      })
+    }})
+});
+
 
 app.listen(8080, 'localhost', () => {
   console.log('Server serving Strzeltu.pl')

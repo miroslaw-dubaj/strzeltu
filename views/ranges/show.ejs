@@ -1,0 +1,39 @@
+<% include ../partials/header.ejs %>
+
+<div class="container">
+  <div class="row"> 
+      <div class="col">
+        <div class="card mb-3">
+          <img src="<%= range.image %>" class="card-img-top"/>
+          <div class="card-body">
+            <h5 class="card-title"><%= range.name %></h5>
+            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+          </div>
+        </div>
+      </div>  
+  </div>
+  <div class="row">
+    <ul class="list-group">
+      <% range.comments.forEach((comment) => { %>
+        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+          <li class="media">
+            <img class="mr-3" src="" alt="Generic placeholder image">
+            <div class="media-body">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mt-0 mb-1"><%= comment.author %></h5>
+                <p class="font-weight-light font-italic">
+                  <small><%= comment.date.toDateString() %></small>
+                </p>
+              </div>
+              <p class="mb-1"><%= comment.text %></p>        
+            </div>
+          </li>
+        </a>
+      <% }) %>
+    </ul>
+    </div>
+    <a href="<%= range._id %>/comments/new" class="btn btn-dark">Add new comment!</a>
+</div>
+
+<% include ../partials/footer.ejs %>
