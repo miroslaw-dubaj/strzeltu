@@ -1,0 +1,21 @@
+# Move this file ../ from current directory and run docker-compose up -d in terminal
+version: '3.1'
+
+services:
+  express:
+    image: miroslawdubaj/first-image
+    ports: 
+      - "80:8080"
+    volumes: 
+      - ./strzeltu-node-mdb-ejs:/usr/src/app
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: mdubaj
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example123
+  mongo:
+    image: mongo
+    restart: always
+    volumes: 
+      - /mongodb-datadir:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mdubaj
+      MONGO_INITDB_ROOT_PASSWORD: example123
