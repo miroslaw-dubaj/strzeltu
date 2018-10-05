@@ -5,7 +5,7 @@ const express =     require('express'),
       Range =       require('./models/range'),
       Comment =     require('./models/comment');
 
-mongoose.connect('mongodb://localhost/strzeltu');
+mongoose.connect(`mongodb://${process.env.ME_CONFIG_MONGODB_ADMINUSERNAME}:${process.env.ME_CONFIG_MONGODB_ADMINPASSWORD}@mongo:27017`);
 
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -70,7 +70,4 @@ app.post('/ranges/:id/comments', (req, res) => {
     }})
 });
 
-
-app.listen(8080, 'localhost', () => {
-  console.log('Server serving Strzeltu.pl')
-});
+module.exports = app;
