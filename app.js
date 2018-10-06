@@ -2,8 +2,11 @@ const express =     require('express'),
       app =         express(),
       bodyParser =  require('body-parser'), 
       mongoose =    require('mongoose'),
+      passport =    require('passport'),
+      LocalStrategy = require('passport-local'),
       Range =       require('./models/range'),
-      Comment =     require('./models/comment');
+      Comment =     require('./models/comment'),
+      User =        require('./models/user');
 
 mongoose.connect(`mongodb://${process.env.ME_CONFIG_MONGODB_ADMINUSERNAME}:${process.env.ME_CONFIG_MONGODB_ADMINPASSWORD}@mongo:27017`);
 
@@ -17,6 +20,17 @@ app.use('/js', express.static(__dirname + '/node_modules/jquery/dist')); // redi
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css')); // redirect CSS bootstrap
 
 app.set('view engine', 'ejs');
+
+// passport config
+app.use(require('express-session')({
+  secret: 'Beton zalega w Kasztelanie ale nie brak na go i na Strzelce',
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.get('/', (req, res) => {
   res.render('landing')
@@ -68,6 +82,37 @@ app.post('/ranges/:id/comments', (req, res) => {
         } 
       })
     }})
+});
+
+// Authorization Routes
+
+app.get("/register", (req, res) => {
+  res.render('register');
+});
+
+app.post('/register', (req, res) => {
+  const newUser = new User({username: req.body.username});
+  User.register(newUser, req.body.password, (err, user) => {
+    if(err) {
+      console.log(err);
+      return res.render('register');
+    }
+    passport.authenticate('local')(req, res, () => {
+      res.redirect('/ranges');
+    });
+  });
+});
+
+app.get("/login", (req, res) => {
+  res.render('login');
+});
+
+app.post('/login', passport.authenticate('local', 
+  {
+    successRedirect: '/ranges',
+    faliureRedirect: '/login'
+  }), (req, res) => {
+  console.log('login callback')
 });
 
 module.exports = app;
