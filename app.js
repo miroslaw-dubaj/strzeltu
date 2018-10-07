@@ -6,8 +6,13 @@ const express =     require('express'),
       LocalStrategy = require('passport-local'),
       Range =       require('./models/range'),
       Comment =     require('./models/comment'),
-      User =        require('./models/user');
-
+      User =        require('./models/user'),
+      session =     require('express-session');
+      
+const commentRoutes = require('./routes/comment'),
+      rangeRoutes =   require('./routes/ranges'),
+      indexRoutes =    require('./routes/index');
+      
 mongoose.connect(`mongodb://${process.env.ME_CONFIG_MONGODB_ADMINUSERNAME}:${process.env.ME_CONFIG_MONGODB_ADMINPASSWORD}@mongo:27017`);
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -28,91 +33,19 @@ app.use(require('express-session')({
   saveUninitialized: false
 }));
 app.use(passport.initialize());
+app.use(passport.session());
+
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.get('/', (req, res) => {
-  res.render('landing')
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  next();
 });
 
-app.get('/ranges', (req, res) => {
-  Range.find({}, (err, dbRanges) => {
-    (err)?console.log(err):res.render('ranges/index', {ranges: dbRanges});
-  })
-});
-
-app.post('/ranges', (req, res) => {
-  const name = req.body.name;
-  const image = req.body.image;
-  const newRange = {name: name, image: image}
-  Range.create(newRange, (err, dbResponse) => {
-    (err)?(console.log(err)):res.redirect('/ranges');
-  })
-});
-
-app.get('/ranges/new/', (req, res) => {
-  res.render('ranges/new');
-});
-
-app.get('/ranges/:id', (req, res) => {
-  Range.findById(req.params.id).populate('comments').exec((err, dbRange) => {
-    (err) ? console.log(err) : res.render('ranges/show', { range: dbRange });
-  });
-});
-
-app.get('/ranges/:id/comments/new', (req, res) => {
-  Range.findById(req.params.id, (err, dbRange) => {
-    (err) ? console.log(err) : res.render('comments/new', { range: dbRange });
-  });
-});
-
-app.post('/ranges/:id/comments', (req, res) => {
-  Range.findById(req.params.id, (err, dbRange) => {
-    if (err) {
-      console.log(err);
-    } else {
-      Comment.create(req.body.comment, (err, dbResponse) => {
-        if (err) {
-          console.log(err); 
-        } else {
-          dbRange.comments.push(dbResponse);
-          dbRange.save();
-          res.redirect('/ranges/' + dbRange._id);
-        } 
-      })
-    }})
-});
-
-// Authorization Routes
-
-app.get("/register", (req, res) => {
-  res.render('register');
-});
-
-app.post('/register', (req, res) => {
-  const newUser = new User({username: req.body.username});
-  User.register(newUser, req.body.password, (err, user) => {
-    if(err) {
-      console.log(err);
-      return res.render('register');
-    }
-    passport.authenticate('local')(req, res, () => {
-      res.redirect('/ranges');
-    });
-  });
-});
-
-app.get("/login", (req, res) => {
-  res.render('login');
-});
-
-app.post('/login', passport.authenticate('local', 
-  {
-    successRedirect: '/ranges',
-    faliureRedirect: '/login'
-  }), (req, res) => {
-  console.log('login callback')
-});
+app.use(indexRoutes);
+app.use(commentRoutes);
+app.use(rangeRoutes);
 
 module.exports = app;
