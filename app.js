@@ -9,7 +9,7 @@ const express =     require('express'),
       User =        require('./models/user'),
       session =     require('express-session');
       
-const commentRoutes = require('./routes/comment'),
+const commentRoutes = require('./routes/comments'),
       rangeRoutes =   require('./routes/ranges'),
       indexRoutes =    require('./routes/index');
       
@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 });
 
 app.use(indexRoutes);
-app.use(commentRoutes);
-app.use(rangeRoutes);
+app.use('/ranges/:id/comments', commentRoutes);
+app.use('/ranges', rangeRoutes);
 
 module.exports = app;
