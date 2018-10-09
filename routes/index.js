@@ -4,12 +4,12 @@ const passport = require('passport');
 const User = require('../models/user');
 
 router.get('/', (req, res) => {
-  res.render('landing')
+  res.render('landing');
 });
 
 // Authorization Routes
 
-router.get("/register", (req, res) => {
+router.get('/register', (req, res) => {
   res.render('register');
 });
 
@@ -30,13 +30,16 @@ router.get('/login', (req, res) => {
   res.render('login');
 });
 
-router.post('/login', passport.authenticate('local',
-  {
+router.post(
+  '/login',
+  passport.authenticate('local', {
     successRedirect: '/ranges',
     faliureRedirect: '/login'
-  }), (req, res) => {
-    console.log('login callback')
-  });
+  }),
+  (req, res) => {
+    console.log('login callback');
+  }
+);
 
 router.get('/logout', (req, res) => {
   req.logout();
