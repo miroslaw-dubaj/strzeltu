@@ -1,15 +1,13 @@
-let middleware = {};
-
-middleware.isLoggedIn = (req, res, next) => {
+const isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect("/users");
+  res.redirect('/users');
 };
 
-middleware.currentUser = (req, res, next) => {
+const currentUser = (req, res, next) => {
   res.locals.currentUser = req.user;
   next();
 };
 
-module.exports = middleware;
+module.exports = { isLoggedIn, currentUser };
