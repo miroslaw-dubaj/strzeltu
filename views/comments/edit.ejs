@@ -1,0 +1,20 @@
+<% include ../partials/header.ejs %>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div>
+      <h2 class="my-3">Edit post</h2>
+      <form action="/ranges/<%= range_id %>/comments/<%= comment._id %>?_method=PUT" method="POST">
+        <div class="form-group">
+          <input class="form-control" type="text" name="comment[text]" placeholder="comment" value="<%= comment.text %>">
+        </div>
+        <div class="form-group">
+          <input class="btn btn-dark btn-block" type="submit" value="Submit Post!">
+        </div>
+      </form>    
+      <a href="/ranges/<%= range_id %>">Go back</a>
+    </div>
+  </div>
+</div>
+
+<% include ../partials/footer.ejs %>

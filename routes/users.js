@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 
-router.get("/users/new", middlewares, (req, res) => {
+router.get("/new", middlewares, (req, res) => {
   res.render("users/new");
 });
 
-router.post("/users", (req, res) => {
+router.post("/", (req, res) => {
   const newUser = new User({ username: req.body.username });
   User.register(newUser, req.body.password, (err, user) => {
     if (err) {
@@ -19,19 +19,19 @@ router.post("/users", (req, res) => {
   });
 });
 
-router.get("/users", (req, res) => {
+router.get("/", (req, res) => {
   res.render("users/login");
 });
 
 router.post(
-  "/users/login",
+  "/login",
   passport.authenticate("local", {
     successRedirect: "/ranges",
     faliureRedirect: "/users/login"
   })
 );
 
-router.get("/users/logout", (req, res) => {
+router.get("/logout", (req, res) => {
   req.logout();
   res.redirect("/");
 });
