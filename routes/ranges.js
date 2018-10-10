@@ -2,13 +2,15 @@ const express = require("express");
 const router = express.Router();
 const Range = require("../models/range");
 
+const middleware = require("../middlewares");
+
 router.get("/", (req, res) => {
   Range.find({}, (err, ranges) => {
     err ? console.log(err) : res.render("ranges/index", { ranges });
   });
 });
 
-router.post("/", isLoggedIn, (req, res) => {
+router.post("/", middleware.isLoggedIn, (req, res) => {
   const name = req.body.name;
   const image = req.body.image;
   const author = {
@@ -21,7 +23,7 @@ router.post("/", isLoggedIn, (req, res) => {
   });
 });
 
-router.get("/new", isLoggedIn, (req, res) => {
+router.get("/new", middleware.isLoggedIn, (req, res) => {
   res.render("ranges/new");
 });
 

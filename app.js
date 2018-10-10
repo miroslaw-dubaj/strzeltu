@@ -7,9 +7,12 @@ const express = require("express"),
   methodOverride = require("method-override"),
   User = require("./models/user");
 
+const middleware = require("./middlewares");
+
 const commentRoutes = require("./routes/comments"),
   rangeRoutes = require("./routes/ranges"),
   indexRoutes = require("./routes/index");
+  usersRoutes = require("./routes/users");
 
 mongoose.connect(
   `mongodb://${process.env.ME_CONFIG_MONGODB_ADMINUSERNAME}:${
@@ -19,38 +22,32 @@ mongoose.connect(
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// prepare server
-// app.use('/api', api); // redirect API calls
 app.use("/", express.static(__dirname + "/www")); // redirect root
 app.use("/js", express.static(__dirname + "/node_modules/bootstrap/dist/js")); // redirect bootstrap JS
 app.use("/js", express.static(__dirname + "/node_modules/jquery/dist")); // redirect JS jQuery
 app.use("/css", express.static(__dirname + "/node_modules/bootstrap/dist/css")); // redirect CSS bootstrap
 
 app.set("view engine", "ejs");
-app.use(methodOverride("_method"));
 
-// passport config
+app.use(methodOverride("_method"));
+app.use(middleware.currentUser);
 app.use(
   require("express-session")({
-    secret: "Beton zalega w Kasztelanie ale nie brak na go i na Strzelce",
+    secret: "CZ sucks Glock rulez",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: true
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
-
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use((req, res, next) => {
-  res.locals.currentUser = req.user;
-  next();
-});
-
 app.use(indexRoutes);
 app.use("/ranges/:id/comments", commentRoutes);
 app.use("/ranges", rangeRoutes);
+app.use("/users", usersRoutes);
 
 module.exports = app;

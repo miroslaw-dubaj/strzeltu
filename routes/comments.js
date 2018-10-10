@@ -3,13 +3,15 @@ const router = express.Router({ mergeParams: true });
 const Range = require("../models/range");
 const Comment = require("../models/comment");
 
-router.get("/new", isLoggedIn, (req, res) => {
+const middleware = require("../middlewares");
+
+router.get("/new", middleware.isLoggedIn, (req, res) => {
   Range.findById(req.params.id, (err, dbRange) => {
     err ? console.log(err) : res.render("comments/new", { range: dbRange });
   });
 });
 
-router.post("/", isLoggedIn, (req, res) => {
+router.post("/", middleware.isLoggedIn, (req, res) => {
   Range.findById(req.params.id, (err, dbRange) => {
     if (err) {
       console.log(err);
