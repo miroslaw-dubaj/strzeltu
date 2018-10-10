@@ -3,16 +3,16 @@
 <div class="container">
   <div class="row justify-content-center">
     <div>
-      <h2 class="my-3">This is new range form</h2>
-      <form action="/ranges" method="post">
+      <h2 class="my-3">Edit <%= range.name %></h2>
+      <form action="/ranges/<%= range._id %>?_method=PUT" method="POST">
         <div class="form-group">
-          <input class="form-control" type="text" name="name" placeholder="name of new range">
+          <input class="form-control" type="text" name="range[name]" placeholder="name of the range" value="<%= range.name %>">
         </div>
         <div class="form-group">
-          <input class="form-control" type="text" name="image" placeholder="image url">
+          <input class="form-control" type="text" name="range[image]" placeholder="image url" value="<%= range.image %>">
         </div>
         <div class="form-group">
-          <input class="form-control" type="text" name="shortDesc" placeholder="short description">
+          <input class="form-control" type="text" name="range[shortDesc]" placeholder="short description" value="<%= range.shortDesc %>">
         </div>
         <div class="form-group">
           <input class="btn btn-dark btn-block" type="submit" value="Submit Range!">

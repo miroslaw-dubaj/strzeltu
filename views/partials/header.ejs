@@ -16,15 +16,31 @@
     <div class="container">
       <a class="navbar-brand" href="/">StrzelTu.pl</a>
       <button class="navbar-toggler" 
-        type="button" data-toggle="collapse" data-target="#strzeltu-nav-collapse" 
-        aria-controls="strzeltu-nav-collapse" aria-expanded="false" aria-label="Toggle navigation">
+        type="button" 
+        data-toggle="collapse" 
+        data-target="#strzeltu-nav-collapse" 
+        aria-controls="strzeltu-nav-collapse" 
+        aria-expanded="false" 
+        aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="strzeltu-nav-collapse">
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item"><a href="/" class="nav-link">Login</a></li>
-        <li class="nav-item"><a href="/" class="nav-link">Login</a></li>
-        <li class="nav-item"><a href="/" class="nav-link">Login</a></li>
+      <% if (!currentUser) { %>
+        <li class="nav-item">
+          <a href="/users" class="nav-link">Login</a>
+        </li>
+        <li class="nav-item">
+          <a href="/users/new" class="nav-link">Register</a>
+        </li>
+      <% } else { %>
+        <li class="nav-item">
+          <a href="#" class="nav-link">Logged in as <%= currentUser.username %></a>
+        </li>
+        <li class="nav-item">
+          <a href="/users/logout" class="nav-link">Logout</a>
+        </li>
+      <% } %>
       </ul>
       </div>
     </div>
