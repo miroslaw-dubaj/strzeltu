@@ -32,7 +32,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
   });
 });
 
-router.get("/:comment_id/edit", (req, res) => {
+router.get("/:comment_id/edit", middleware.checkRangeOwnership, (req, res) => {
   Comment.findById(req.params.comment_id, (err, foundComment) => {
     err
       ? res.redirect("back")
@@ -43,7 +43,7 @@ router.get("/:comment_id/edit", (req, res) => {
   });
 });
 
-router.put("/:comment_id", (req, res) => {
+router.put("/:comment_id", middleware.checkRangeOwnership, (req, res) => {
   Comment.findByIdAndUpdate(
     req.params.comment_id,
     req.body.comment,
@@ -53,17 +53,10 @@ router.put("/:comment_id", (req, res) => {
   );
 });
 
-router.delete("/:comment_id", (req, res) => {
+router.delete("/:comment_id", middleware.checkRangeOwnership, (req, res) => {
   Comment.findByIdAndRemove(req.params.comment_id, err => {
     err ? res.redirect("back") : res.redirect(`/ranges/${req.params.id}`);
   });
 });
-
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/login");
-}
 
 module.exports = router;
