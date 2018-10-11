@@ -1,31 +1,57 @@
 const Range = require("../models/range");
+const Comment = require("../models/comment");
 
 const isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
+  req.flash("error", "You need to be logged in to do that!");
   res.redirect("/users");
-};
-
-const currentUser = (req, res, next) => {
-  res.locals.currentUser = req.user;
-  next();
 };
 
 const checkRangeOwnership = (req, res, next) => {
   if (req.isAuthenticated()) {
     Range.findById(req.params.id, (err, foundRange) => {
       if (err) {
-        res.redirect("/ranges");
+        req.flash("error", "Range not found!");
+        res.redirect("back");
       } else {
-        foundRange.author.id.equals(req.user._id)
-          ? next()
-          : res.redirect("back");
-      }
+        if (foundRange.author.id.equals(req.user._id)) {
+          next();
+        } else {
+          req.flash("error", "You don't have permission to do that!");
+          res.redirect("back");
+        };
+      };
     });
   } else {
+    req.flash("error", "You need to be logged in to do that!");
     res.redirect("back");
   }
 };
 
-module.exports = { isLoggedIn, currentUser, checkRangeOwnership };
+const checkCommentOwnership = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    Comment.findById(req.params.comment_id, (err, foundComment) => {
+      if (err) {
+        res.redirect("back");
+      } else {
+        if (foundComment.author.id.equals(req.user._id)) {
+          next();
+        } else {
+          req.flash("error", "You need to be logged in to do that!");
+          res.redirect("back");
+        };
+      };
+    });
+  } else {
+    req.flash("error", "You need to be logged in to do that!");
+    res.redirect("back");
+  }
+};
+
+module.exports = {
+  isLoggedIn,
+  checkRangeOwnership,
+  checkCommentOwnership
+};

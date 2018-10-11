@@ -37,9 +37,12 @@ router.get("/:id", (req, res) => {
 
 router.get("/:id/edit", middleware.checkRangeOwnership, (req, res) => {
   Range.findById(req.params.id, (err, foundRange) => {
-    err
-      ? res.redirect("back")
-      : res.render("ranges/edit", { range: foundRange });
+    if (err) {
+      req.flash("error", "Range not found!");
+      res.redirect("back");
+    } else {
+      res.render("ranges/edit", { range: foundRange });
+    };
   });
 });
 
@@ -47,13 +50,23 @@ router.put("/:id", middleware.checkRangeOwnership, (req, res) => {
   let editedRange = req.body.range;
   editedRange.date = Date.now();
   Range.findByIdAndUpdate(req.params.id, editedRange, (err, updatedRange) => {
-    err ? res.redirect("/ranges") : res.redirect(`/ranges/${req.params.id}`);
+    if (err) {
+      req.flash("error", "Range not found!");
+      res.redirect("/ranges")
+    } else {
+      res.redirect(`/ranges/${req.params.id}`);
+    };
   });
 });
 
 router.delete("/:id", middleware.checkRangeOwnership, (req, res) => {
   Range.findByIdAndRemove(req.params.id, err => {
-    err ? res.redirect("/ranges") : res.redirect("/ranges");
+    if (err) {
+      req.flash("error", "Range not found!");
+      res.redirect("/ranges");
+    } else {
+      res.redirect("/ranges");
+    }
   });
 });
 

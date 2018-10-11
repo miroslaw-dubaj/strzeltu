@@ -18,6 +18,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
     } else {
       Comment.create(req.body.comment, (err, dbResponse) => {
         if (err) {
+          req.flash("error", "Something went wrong!");
           console.log(err);
         } else {
           dbResponse.author.id = req.user._id;
@@ -25,6 +26,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
           dbResponse.save();
           dbRange.comments.push(dbResponse);
           dbRange.save();
+          req.flash("success", "Comment added");
           res.redirect("/ranges/" + dbRange._id);
         }
       });
@@ -32,7 +34,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
   });
 });
 
-router.get("/:comment_id/edit", middleware.checkRangeOwnership, (req, res) => {
+router.get("/:comment_id/edit", middleware.checkCommentOwnership, (req, res) => {
   Comment.findById(req.params.comment_id, (err, foundComment) => {
     err
       ? res.redirect("back")
@@ -43,7 +45,7 @@ router.get("/:comment_id/edit", middleware.checkRangeOwnership, (req, res) => {
   });
 });
 
-router.put("/:comment_id", middleware.checkRangeOwnership, (req, res) => {
+router.put("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
   Comment.findByIdAndUpdate(
     req.params.comment_id,
     req.body.comment,
@@ -53,9 +55,15 @@ router.put("/:comment_id", middleware.checkRangeOwnership, (req, res) => {
   );
 });
 
-router.delete("/:comment_id", middleware.checkRangeOwnership, (req, res) => {
+router.delete("/:comment_id", middleware.checkCommentOwnership, (req, res) => {
   Comment.findByIdAndRemove(req.params.comment_id, err => {
-    err ? res.redirect("back") : res.redirect(`/ranges/${req.params.id}`);
+    if (err) {
+      req.flash("error", "Something went wrong!");
+      res.redirect("back")
+    } else {
+      req.flash("success", "Succesfully deleted comment");
+      res.redirect(`/ranges/${req.params.id}`);
+    };
   });
 });
 

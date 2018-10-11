@@ -12,10 +12,11 @@ router.post("/", (req, res) => {
   const newUser = new User({ username: req.body.username });
   User.register(newUser, req.body.password, (err, user) => {
     if (err) {
-      console.log(err);
+      req.flash("error", err.message);
       return res.status(403).render("/users/new");
     }
     passport.authenticate("local")(req, res, () => {
+      req.flash("success", `Hi ${user.username}! Great to have you on board!`);
       res.redirect("/ranges");
     });
   });
@@ -37,6 +38,7 @@ router.post(
 
 router.get("/logout", (req, res) => {
   req.logout();
+  req.flash("success", "User logged out");
   res.redirect("/");
 });
 
